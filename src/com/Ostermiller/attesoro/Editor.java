@@ -71,6 +71,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -79,6 +80,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
@@ -114,7 +116,7 @@ import com.bulenkov.darcula.DarculaLaf;
 
 public class Editor {
 
-	private static String version = "2.0.0";
+	private static String version = "2.1.0";
 	private static ResourceBundle labels = ResourceBundle.getBundle("com.Ostermiller.attesoro.Editor",  Locale.getDefault());
 	private static UberProperties props = new UberProperties();
 	private static String[] userFile = new String[] {".java", "com","Ostermiller","attesoro","Editor.ini"};
@@ -934,7 +936,7 @@ public class Editor {
 		loadMenuItem.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				//------------------ 打开文件按钮 ------------------
-				FileDialog fileDialog = new FileDialog(frame, "请选择一个Properties文件", FileDialog.LOAD);
+				FileDialog fileDialog = new FileDialog(frame, Editor.labels.getString("load_file_title"), FileDialog.LOAD);
 				fileDialog.setModal(true);
 				fileDialog.setFilenameFilter(new FilenameFilter() {
 					
@@ -1061,6 +1063,34 @@ public class Editor {
 			}
 		});
 		actionsMenu.add(nextKeyMenuItem);
+		actionsMenu.addSeparator();
+		JMenuItem showclassMenuItem = new JMenuItem(Editor.labels.getString("getcode_menu_name"));
+		showclassMenuItem.setMnemonic(labels.getString("getcode_menu_key").charAt(0));
+		showclassMenuItem.getAccessibleContext().setAccessibleDescription(labels.getString("getcode_menu_description"));
+		showclassMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_J, getCtrlMask()));
+		showclassMenuItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				//增加文件未打开检测
+				if (names == null || names.size() == 0) {
+					return;
+				}
+				StringBuilder builder = new StringBuilder();
+				builder.append("private static ResourceBundle strings = ResourceBundle.getBundle(\"com.package.name.Class\",  Locale.getDefault());\n\n");
+				for (Name name : names) {
+					builder.append("/**\n");
+					builder.append(" * ").append(((TranslationData)workingNode.getUserObject()).properties.getProperty(name.name)).append("\n");
+					builder.append(" */\n");
+					builder.append("public static final String "+name.name.replace(".", "_")+" = "+"strings.getString(\""+name.name+"\");\n\n");
+				}
+				JDialog dialog = new JDialog();
+				dialog.setBounds(frame.getX(),frame.getY(),frame.getWidth(),frame.getHeight());
+				JTextArea area = new JTextArea(builder.toString());
+				dialog.getContentPane().add(new JScrollPane(area),BorderLayout.CENTER);
+				dialog.setVisible(true);
+			}
+		});
+		actionsMenu.add(showclassMenuItem);
+		
 		menuBar.add(actionsMenu);
 		JMenu helpMenu = new JMenu(labels.getString("help_menu_name"));
 		helpMenu.setMnemonic(labels.getString("help_menu_key").charAt(0));
