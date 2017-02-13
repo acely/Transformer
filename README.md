@@ -16,7 +16,9 @@ A java i18n tool,forked from Attesoro (attesoro.org) and polished.
 
 6、界面默认尺寸和布局优化。
 
-7、修复原版的一些bug。
+7、可以导出辅助Java代码
+
+8、修复原版的一些bug。
 
 ---
 1、Dark UI using DarculaLookAndFeel,make eyes more comfortable,and more focus on text.
@@ -31,7 +33,9 @@ A java i18n tool,forked from Attesoro (attesoro.org) and polished.
 
 6、Refile default UI size and layout.
 
-7、Fix some bugs of Attesoro.
+7、Can export helper java code
+
+8、Fix some bugs of Attesoro.
 
 
 ---
